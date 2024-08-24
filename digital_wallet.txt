@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct user {
+    int userID;
+    int balance;
+};
+
+struct Transaction {
+    int from_userID;
+    int to_userID;
+    int amount;
+};
+
+int findUserIndex(const vector<user>& users, int userID) {
+    for (size_t i = 0; i < users.size(); i++) {  
+        if (users[i].userID == userID) {
+            return i;
+        }
+    }
+    return -1; 
+}
+
+int main() {
+    int N, T;
+
+    
+    cin >> N;
+    vector<user> users(N);
+
+    for (int i = 0; i < N; i++) {
+        cin >> users[i].userID >> users[i].balance;
+    }
+
+    
+    cin >> T;
+    vector<Transaction> transactions(T);
+
+    
+    for (int i = 0; i < T; i++) {
+        cin >> transactions[i].from_userID >> transactions[i].to_userID >> transactions[i].amount;
+    }
+
+
+    for (int i = 0; i < T; i++) {
+        int fromIndex = findUserIndex(users, transactions[i].from_userID);
+        int toIndex = findUserIndex(users, transactions[i].to_userID);
+        int amount = transactions[i].amount;
+
+        if (fromIndex != -1 && toIndex != -1 && users[fromIndex].balance >= amount) {
+            
+            users[fromIndex].balance -= amount;
+            users[toIndex].balance += amount;
+            cout << "Success" << endl;
+        } else {
+        
+            cout << "Failure" << endl;
+        }
+    }
+
+    
+    cout << endl;
+
+
+    sort(users.begin(), users.end(), [](user a, user b) {
+        return a.balance < b.balance;
+    });
+
+
+    for (const auto& user : users) {
+        cout << user.userID << " " << user.balance << endl;
+    }
+
+    return 0;
+}
